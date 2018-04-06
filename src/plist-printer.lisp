@@ -5,11 +5,11 @@
            #:pprints))
 (in-package :plist-printer)
 
-(defun make-column (&key key label (width-size nil) (width-sizing :auto) (getter :getf))
+(defun make-column (&key key label (width '(:size nil :sizing :auto)) (getter :getf))
   (assert key (key) "keyは必須です。")
   (assert (keywordp key) (key) "key はキーワード・シンボルにしてください。val=~a")
   `(:key ,key
-    :width (:size ,width-size :sizing ,width-sizing)
+    :width ,width
     :getter ,getter
     :label ,(or label (princ-to-string key))))
 
@@ -45,7 +45,8 @@
 (defun make-header-values (columns)
   (when columns
     (let ((column (car columns)))
-      (cons (getf column :key)
+      (cons (or (getf column :label)
+                (getf column :key))
             (make-header-values (cdr columns))))))
 
 (defun get-value-length (plist column)
