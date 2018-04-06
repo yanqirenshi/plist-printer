@@ -2,7 +2,7 @@
   (:nicknames :pp)
   (:use #:cl)
   (:export #:make-column
-           #:prints))
+           #:pprints))
 (in-package :plist-printer)
 
 (defun make-column (&key key label (width-size nil) (width-sizing :auto) (getter :getf))
@@ -82,7 +82,7 @@
            control-string
            (make-values plist columns))))
 
-(defun prints (plists columns-data)
+(defun pprints (plists columns-data)
   (let* ((columns (cal-columns-width (make-columns columns-data)
                                      plists))
          (control-string (make-control-string columns)))
