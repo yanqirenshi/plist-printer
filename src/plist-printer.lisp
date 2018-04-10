@@ -9,7 +9,7 @@
   (assert key (key) "keyは必須です。")
   (assert (keywordp key) (key) "key はキーワード・シンボルにしてください。val=~a")
   `(:key ,key
-    :width ,width
+    :width ,(copy-list width)
     :getter ,getter
     :label ,(or label (princ-to-string key))))
 
@@ -49,11 +49,20 @@
                 (getf column :key))
             (make-header-values (cdr columns))))))
 
+(defun cal-value-length (str)
+  (if (= 0 (length str))
+      0
+      (+ (if (= 1 (length (sb-ext:string-to-octets (subseq str 0 1))))
+             1 2)
+         (cal-value-length (if (= 1 (length str))
+                               ""
+                               (subseq str 1))))))
+
 (defun get-value-length (plist column)
   (let ((value (make-value plist column)))
-    (length (if (stringp value)
-                value
-                (princ-to-string value)))))
+    (cal-value-length (if (stringp value)
+                          value
+                          (princ-to-string value)))))
 
 (defun set-column-width (columns-data plist)
   (dolist (column columns-data)
