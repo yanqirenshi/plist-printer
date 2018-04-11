@@ -42,11 +42,21 @@
                      "a "
                      (make-control-string (cdr columns))))))
 
+(defun make-header-value (column)
+  (or (getf column :label)
+      (getf column :key)))
+
+(defun make-header-values-plist (columns)
+  (when columns
+    (let ((column (car columns)))
+      (nconc (list (getf column :key)
+                   (make-header-value column))
+             (make-header-values-plist (cdr columns))))))
+
 (defun make-header-values (columns)
   (when columns
     (let ((column (car columns)))
-      (cons (or (getf column :label)
-                (getf column :key))
+      (cons (make-header-value column)
             (make-header-values (cdr columns))))))
 
 (defun cal-value-length (str)
@@ -74,12 +84,20 @@
           (setf (getf (getf column :width) :size)
                 size))))))
 
-(defun cal-columns-width (columns-data plists)
+(defun cal-columns-width-at-body (columns-data plists)
   (if (null plists)
       columns-data
       (let ((plist (car plists)))
         (set-column-width columns-data plist)
-        (cal-columns-width columns-data (cdr plists)))))
+        (cal-columns-width-at-body columns-data (cdr plists)))))
+
+(defun cal-columns-width-at-header (columns-data)
+  (set-column-width columns-data
+                    (make-header-values-plist columns-data)))
+
+(defun cal-columns-width (columns-data plists)
+  (cal-columns-width-at-header columns-data)
+  (cal-columns-width-at-body columns-data plists))
 
 (defun print-header-line (control-string columns)
   (apply #'format t
