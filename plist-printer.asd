@@ -6,10 +6,12 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ()
+  :depends-on (:alexandria)
   :components ((:module "src"
                 :components
-                ((:file "plist-printer"))))
+                ((:file "package")
+                 (:file "column")
+                 (:file "pprint"))))
   :description ""
   :long-description
   #.(read-file-string

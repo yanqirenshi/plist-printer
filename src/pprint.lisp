@@ -1,36 +1,35 @@
-(defpackage plist-printer
-  (:nicknames :pp)
-  (:use #:cl)
-  (:export #:make-column
-           #:pprints))
 (in-package :plist-printer)
 
-(defun make-column (&key key label (width '(:size nil :sizing :auto)) (getter :getf))
-  (assert key (key) "keyは必須です。")
-  (assert (keywordp key) (key) "key はキーワード・シンボルにしてください。val=~a")
-  `(:key ,key
-    :width ,(copy-list width)
-    :getter ,getter
-    :label ,(or label (princ-to-string key))))
+(defun get-first-line (str)
+  (let ((pos (position #\Newline str)))
+    (if (null pos)
+        str
+        (concatenate 'string
+                     (subseq str 0 pos)
+                     " ..."))))
 
-(defun make-columns (data)
-  (when data
-    (let ((d (car data)))
-      (cons (apply #'make-column d)
-            (make-columns (cdr data))))))
+(defun value2string (value)
+  (cond ((or (stringp value)
+             (numberp value))
+         (princ-to-string value))
+        (t (format nil "~S" value))))
 
-(defun make-value (data column)
-  (let ((key (getf column :key))
-        (getter (getf column :getter)))
+(defun get-value (column data key)
+  (let ((getter (getf column :getter)))
     (if (eq :getf getter)
         (getf data key)
         (funcall getter data))))
 
-(defun make-values (data columns)
+(defun make-print-value (data column)
+  (let ((key (getf column :key)))
+    (get-first-line
+     (value2string (get-value column data key)))))
+
+(defun make-print-values (data columns)
   (when columns
     (let ((column (car columns)))
-      (cons (make-value data column)
-            (make-values data (cdr columns))))))
+      (cons (make-print-value data column)
+            (make-print-values data (cdr columns))))))
 
 (defun make-control-string (columns)
   (if (null columns)
@@ -69,7 +68,7 @@
                                (subseq str 1))))))
 
 (defun get-value-length (plist column)
-  (let ((value (make-value plist column)))
+  (let ((value (make-print-value plist column)))
     (cal-value-length (if (stringp value)
                           value
                           (princ-to-string value)))))
@@ -108,7 +107,7 @@
   (dolist (plist plists)
     (apply #'format t
            control-string
-           (make-values plist columns))))
+           (make-print-values plist columns))))
 
 (defun pprints (plists columns-data)
   (let* ((columns (cal-columns-width (make-columns columns-data)
