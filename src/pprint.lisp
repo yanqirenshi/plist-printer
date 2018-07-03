@@ -109,7 +109,7 @@
            control-string
            (make-print-values plist columns))))
 
-(defun pprints (plists columns-data)
+(defun plrints (plists columns-data)
   (let* ((columns (cal-columns-width (make-columns columns-data)
                                      plists))
          (control-string (make-control-string columns)))

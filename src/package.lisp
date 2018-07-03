@@ -4,7 +4,7 @@
   (:import-from :alexandria
                 #:plist-alist)
   (:export #:make-column
-           #:pprints
+           #:plrints
            #:plist-keys
            #:plists-keys))
 (in-package :plist-printer)
