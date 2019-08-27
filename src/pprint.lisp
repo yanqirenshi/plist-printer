@@ -15,7 +15,7 @@
         (t (format nil "~S" value))))
 
 (defun get-value (column data key)
-  (let ((getter (getf column :getter)))
+  (let ((getter (getf column :value)))
     (if (eq :getf getter)
         (getf data key)
         (funcall getter data))))

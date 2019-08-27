@@ -20,10 +20,10 @@
   (assert (keywordp key) (key) "key はキーワード・シンボルにしてください。val=~a")
   (when getter
     (warn ":getter は廃止予定です。 :value を利用してください。"))
-  `(:key ,key
-    :width  ,(copy-list width)
-    :getter ,(or getter value)
-    :label  ,(or label (princ-to-string key))))
+  `(:key   ,key
+    :width ,(copy-list width)
+    :value ,(or getter value)
+    :label ,(or label (princ-to-string key))))
 
 (defun ensure-column-data (data)
   (if (keywordp data)
