@@ -4,7 +4,8 @@
   (:import-from :alexandria
                 #:plist-alist)
   (:export #:make-column
-           #:plrints
+           #:plrints  ;; TODO: 廃棄予定
+           #:plprints
            #:plist-keys
            #:plists-keys))
 (in-package :plist-printer)

@@ -109,9 +109,13 @@
            control-string
            (make-print-values plist columns))))
 
-(defun plrints (plists columns-data)
+(defun plprints (plists columns-data)
   (let* ((columns (cal-columns-width (make-columns columns-data)
                                      plists))
          (control-string (make-control-string columns)))
     (print-header-line control-string columns)
-    (print-body-lines control-string columns plists)))
+    (print-body-lines  control-string columns plists)))
+
+(defun plrints (plists columns-data)
+  (warn "plrints は廃止予定です。 plprints を利用してください。")
+  (plprints plists columns-data))

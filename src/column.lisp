@@ -15,13 +15,15 @@
 ;;;;;
 ;;;;; column data
 ;;;;;
-(defun make-column (&key key label (width '(:size nil :sizing :auto)) (getter :getf))
+(defun make-column (&key key label (width '(:size nil :sizing :auto)) (value :getf) getter)
   (assert key (key) "keyは必須です。")
   (assert (keywordp key) (key) "key はキーワード・シンボルにしてください。val=~a")
+  (when getter
+    (warn ":getter は廃止予定です。 :value を利用してください。"))
   `(:key ,key
-    :width ,(copy-list width)
-    :getter ,getter
-    :label ,(or label (princ-to-string key))))
+    :width  ,(copy-list width)
+    :getter ,(or getter value)
+    :label  ,(or label (princ-to-string key))))
 
 (defun ensure-column-data (data)
   (if (keywordp data)
